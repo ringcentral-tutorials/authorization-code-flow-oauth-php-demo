@@ -1,0 +1,7 @@
+.DS_Store
+composer.phar
+composer.lock
+# Dependency directories
+/vendor
+.env-production
+.env-sandbox

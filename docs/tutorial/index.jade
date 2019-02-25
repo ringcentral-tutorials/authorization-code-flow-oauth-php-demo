@@ -1,0 +1,104 @@
+.chapter(data-title='RingCentral Platform Authentication - Authorization Code Flow OAuth')
+  .step(data-title='Clone and Setup the project', data-file='../README.md' data-highlight='9-19')
+    :markdown
+      ### Clone and Setup the project
+      Clone the project from GitHub and install RingCentral PHP SDK and dependencies.
+
+  .step(data-title='Create a RingCentral app', data-file='../README.md' data-highlight='25-35')
+    h3 Create a RingCentral app
+
+    p The first thing we need to do is create an app in the RingCentral Developer Portal.
+    p If you don't know how to create a RingCentral app. Click <a href="https://developer.ringcentral.com/library/getting-started.html">here</a> for instructions.
+
+  .step(data-title='Set Environment Variables', data-file='../environment/dotenv-sandbox')
+    :markdown
+     ### Set Environment Variables
+     Copy the Client id and Client secret and add them to the `.env-sandbox` file.
+     ```
+     RC_CLIENT_ID=
+     RC_CLIENT_SECRET=
+     ```
+     If you want to specify variables for your production environment, repeat this step for the `.env-production` file.
+
+  .step(data-title='Implement the main page', data-file='../index.php' data-highlight='1-21')
+    :markdown
+      ### Implement the main page
+
+      We create a main page with login options to login a production account or a sandbox account.
+
+  .step(data-title='Implement the login page', data-file='../login.php')
+    :markdown
+      ### Implement the `login` page
+
+      When a user clicks the login link from the mail page, we add the selected environment value to the `env` query parameter.
+
+      To construct the login page, we do the following steps:
+
+      - Check the query `$_REQUEST['env']` parameter to identify which environment was selected and load our app credentials accordingly.
+
+      - Save the selected environment to the session so we can use it later.
+
+      - Load the SDK and create an instance of the SDK, passing the app credentials and assign to the `$rcsdk` variable.
+
+      - Get the `$platform` instance from the SDK and call the `$platform->authUrl()` function to generate the `$authorize_uri`.
+
+      - Create the login page with the `$authorize_uri` and the `$redirect_uri` assigned as shown on the codes beside.
+
+      The login page is just an empty page with JavaScript codes to launch the pop-up RingCentral login window.
+
+      After login successfully, we will close the popup window and launch the test page.
+
+  .step(data-title='Implement HTTP routes handling', data-file='../engine.php' data-highlight='1-20')
+    :markdown
+      ### Create the engine.php file
+
+      Let's create a file named `engine.php` to implement the `oauth2callback` route and handle our test cases later on.
+
+      When the `engine.php` file is loaded, we load the the RingCentral SDK and check the selected environment from
+      we saved in the session `$_SESSION['env']`. Then we create an instance of the SDK, passing the app credentials and assign to the `$rcsdk` variable.
+
+      We also get the `$platform` instance from the SDK because we'll use it later.
+
+  .step(data-title='Implement the oauth2callback route', data-file='../engine.php' data-highlight='22-35')
+    :markdown
+      ### Implement the `oauth2callback` route
+
+      We specified the redirect Uri as `http://localhost:5000/engine.php?oauth2callback` in our app and we passed the
+      `redirect_uri` in the authentication query. If the redirect URIs match, RingCentral will send a request
+      with the authorization code to this route.
+
+      To start login with the authorization code, we read the `code` sent from RingCentral and use the `$platform->login()` function to login with parameters set as shown on the codes beside.
+
+      If we login successfully, we will save the token info from `tokens` to a session and send a "login success" message to the caller.
+
+  .step(data-title='Implement the test page', data-file='../test.php' data-highlight='1-15')
+    :markdown
+      ### Implement the test page
+
+      Let's create a file named `test.php` add a few test cases and the logout option to the test page.
+
+  .step(data-title='Implement the test route', data-file='../engine.php' data-highlight='35-78')
+    :markdown
+      ### Implement the `test` route
+
+      To call a RingCentral API using the `$platform` instance, we do the following steps:
+
+      - Check if the `tokens` was set in the session. If the `tokens` does not exist, we redirect the user to the main page.
+
+      - Call the `$platform->auth()->setData()` function to set the `tokens` we saved in the session.
+
+      - Call the `$platform->loggedIn()` to check if we are still logged in or not. If we are no longer
+      logged in (access token and refresh token expired), we redirect the user to the main page.
+
+      - Check if the user chooses to logout then call the `$platform->logout()` function to logout and redirect the user to the main page.
+
+      - Check which API was clicked and call the API accordingly as shown on the codes beside.
+
+  .step(data-title='Run the demo app', data-file='../README.md' data-highlight='37-43')
+    :markdown
+      ### Run the demo app
+
+      ```
+      $ php -S localhost:5000
+      ```
+      On a Web browser, enter `localhost:5000` then choose to login your production or sandbox account.
