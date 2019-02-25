@@ -50,12 +50,13 @@
 
   .step(data-title='Implement HTTP routes handling', data-file='../engine.php' data-highlight='1-20')
     :markdown
-      ### Create the engine.php file
+      ### Load the RingCentral PHP SDK
 
       Let's create a file named `engine.php` to implement the `oauth2callback` route and handle our test cases later on.
 
-      When the `engine.php` file is loaded, we load the the RingCentral SDK and check the selected environment from
-      we saved in the session `$_SESSION['env']`. Then we create an instance of the SDK, passing the app credentials and assign to the `$rcsdk` variable.
+      Using a RingCentral SDK is the most convenient way to authenticate and access RingCentral platform services.
+
+      We load the the RingCentral SDK and check the selected environment we saved in the session `$_SESSION['env']`. Then we create an instance of the SDK, passing the app credentials and assign to the `$rcsdk` variable.
 
       We also get the `$platform` instance from the SDK because we'll use it later.
 
@@ -83,14 +84,14 @@
 
       To call a RingCentral API using the `$platform` instance, we do the following steps:
 
-      - Check if the `tokens` was set in the session. If the `tokens` does not exist, we redirect the user to the main page.
+      - Check if the `tokens` was set in the session. If the `tokens` does not exist, we redirect to the main page to force a user login again..
 
       - Call the `$platform->auth()->setData()` function to set the `tokens` we saved in the session.
 
       - Call the `$platform->loggedIn()` to check if we are still logged in or not. If we are no longer
       logged in (access token and refresh token expired), we redirect the user to the main page.
 
-      - Check if the user chooses to logout then call the `$platform->logout()` function to logout and redirect the user to the main page.
+      - Check if the user chooses to logout then call the `$platform->logout()` function to logout and redirect to the main page to force a user login again..
 
       - Check which API was clicked and call the API accordingly as shown on the codes beside.
 
