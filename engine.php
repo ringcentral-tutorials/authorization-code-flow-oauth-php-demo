@@ -24,9 +24,9 @@ if (isset($_REQUEST['oauth2callback'])){
       $qs = $platform->parseAuthRedirectUrl($_SERVER['QUERY_STRING']);
       $qs["redirectUri"] = getenv('RC_REDIRECT_URL');
       try {
-          $apiResponse = $platform->login($qs);
+          $platform->login($qs);
           echo "Login success";
-          $_SESSION['tokens'] = $platform->auth()->data();;
+          $_SESSION['tokens'] = $platform->auth()->data();
       } catch (\RingCentral\SDK\Http\ApiException $e) {
           print 'Expected HTTP Error: ' . $e->getMessage() . PHP_EOL;
       }
