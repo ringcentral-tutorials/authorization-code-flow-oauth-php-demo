@@ -26,7 +26,7 @@ if (isset($_REQUEST['oauth2callback'])){
       try {
           $apiResponse = $platform->login($qs);
           echo "Login success";
-          $_SESSION['tokens'] = $apiResponse->json();
+          $_SESSION['tokens'] = $platform->auth()->data();;
       } catch (\RingCentral\SDK\Http\ApiException $e) {
           print 'Expected HTTP Error: ' . $e->getMessage() . PHP_EOL;
       }
